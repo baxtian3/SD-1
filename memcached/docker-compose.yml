@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  memcached-master:
+    image: memcached:latest
+    container_name: memcached-master
+    ports:
+      - "11213:11211"
+    #command: ["-m", "64"]
+
+  memcached-slave:
+    image: memcached:latest
+    container_name: memcached-slave
+    ports:
+      - "11211:11211"
+    #command: ["-m", "64"]
+
+  memcached-search:
+    build:
+      context: ./app/search
+      dockerfile: Dockerfile
+      
+    container_name: memcached-search
+    stdin_open: true
+    tty: true
+    volumes:
+      - './app/search:/app'
+      - './data_gen/cars.json:/app/cars.json'
+    depends_on:
+      - memcached-master
+      - memcached-slave
+    environment:
+      - MEMCACHED_MASTER_HOST=memcached-master
+      - MEMCACHED_SLAVE_HOST=memcached-slave
+

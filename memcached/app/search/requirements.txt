@@ -1,0 +1,4 @@
+python-memcached===1.59
+uhashring==2.3
+numpy==1.21.5
+
